@@ -1,0 +1,71 @@
+services:
+
+  contenedor_bd:
+    image: mysql:5.7
+    container_name: contenedor_bd
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - micro_db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app_network
+
+  contenedor_login:
+    build:
+      context: ./login
+      dockerfile: Dockerfile
+    container_name: contenedor_login
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: contenedor_bd
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME_AUTH: authentication
+    depends_on:
+      - contenedor_bd
+    networks:
+      - app_network
+
+  contenedor_api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: contenedor_api
+    ports:
+      - "5001:5001"
+    environment:
+      DB_HOST: contenedor_bd
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME_SHOP: shop
+      LOGIN_SERVICE: http://contenedor_login:5000
+    depends_on:
+      - contenedor_bd
+      - contenedor_login
+    networks:
+      - app_network
+
+  contenedor_php:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: contenedor_php
+    ports:
+      - "8080:80"
+    environment:
+      LOGIN_SERVICE: http://localhost:5000
+      API_SERVICE: http://localhost:5001
+    depends_on:
+      - contenedor_login
+      - contenedor_api
+    networks:
+      - app_network
+
+volumes:
+  micro_db_data:
+
+networks:
+  app_network:
+    driver: bridge
