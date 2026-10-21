@@ -1,0 +1,26 @@
+# Iniciar Docker
+sudo systemctl start docker
+
+# Comprobar los contenedores en ejecución
+sudo docker ps
+
+# Comprobar todos los contenedores, incluidos los parados
+sudo docker ps -a
+
+# Comprobar los puertos ocupados (80, 8080, 5000 y 5001)
+sudo ss -ltnp | grep -E ':(80|8080|5000|5001)\b'
+
+# Ir a la carpeta del proyecto (ejemplo: actividad2)
+cd ~/Documentos/Docker/actividad2
+
+# Iniciar los servicios del proyecto
+sudo docker compose up -d
+
+# Comprobar que los contenedores funcionan
+sudo docker ps
+
+# Ver imágenes descargadas
+sudo docker images
+
+# Ver espacio ocupado por Docker
+sudo docker system df
