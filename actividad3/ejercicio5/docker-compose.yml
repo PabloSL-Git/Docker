@@ -1,0 +1,10 @@
+services:
+  ecs-cli:
+    build: .
+    volumes:
+      - aws:/root/.aws
+      - ecs:/root/.ecs
+
+volumes:
+  aws:
+  ecs:

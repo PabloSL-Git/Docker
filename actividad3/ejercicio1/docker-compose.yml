@@ -1,0 +1,12 @@
+services:
+  db:
+    image: mongo:3
+
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_IP=db
+    depends_on:
+      - db
